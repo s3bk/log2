@@ -1,17 +1,51 @@
 use wasm_bindgen::prelude::*;
 use web_sys::console;
 
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub enum Level {
+    Trace,
+    Debug,
+    Info,
+    Warn,
+    Error
+}
+
+#[cfg(target_arch="wasm32")]
+static mut LOG_LEVEL: Level = Level::Info;
+
+pub fn set_level(level: Level) {
+    unsafe {
+        LOG_LEVEL = level;
+    }
+}
+pub fn level() -> Level {
+    unsafe {
+        LOG_LEVEL
+    }
+}
+
 pub fn trace(s: &str) {
     console::trace_1(&JsValue::from_str(s));
 }
 pub fn debug(s: &str) {
-    console::log_1(&JsValue::from_str(s));
+    if level() <= Level::Debug {
+        console::log_1(&JsValue::from_str(s));
+    }
 }
 pub fn info(s: &str) {
-    console::info_1(&JsValue::from_str(s));
+    if level() <= Level::Info {
+        console::info_1(&JsValue::from_str(s));
+    }
+}
+pub fn warn(s: &str) {
+    if level() <= Level::Warn {
+        console::warn_1(&JsValue::from_str(s));
+    }
 }
 pub fn error(s: &str) {
-    console::error_1(&JsValue::from_str(s));
+    if level() <= Level::Debug {
+        console::error_1(&JsValue::from_str(s));
+    }
 }
 
 #[macro_export]
