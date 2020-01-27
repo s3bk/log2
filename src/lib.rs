@@ -7,7 +7,8 @@ pub enum Level {
     Debug,
     Info,
     Warn,
-    Error
+    Error,
+    None
 }
 
 #[cfg(target_arch="wasm32")]
@@ -21,6 +22,13 @@ pub fn set_level(level: Level) {
 pub fn level() -> Level {
     unsafe {
         LOG_LEVEL
+    }
+}
+
+impl Level {
+    #[inline]
+    pub fn enabled(&self) -> bool {
+        *self >= level()
     }
 }
 
@@ -43,7 +51,7 @@ pub fn error(s: &str) {
 #[macro_export]
 macro_rules! trace {
     ($($t:tt)*) => (
-        if $crate::tracelevel() <= $crate::Level::Trace {
+        if $crate::Level::Trace.enabled() {
             $crate::trace(&format!($($t)*))
         }
     )
@@ -52,7 +60,7 @@ macro_rules! trace {
 #[macro_export]
 macro_rules! debug {
     ($($t:tt)*) => (
-        if $crate::tracelevel() <= $crate::Level::Debug {
+        if $crate::Level::Debug.enabled() {
             $crate::debug(&format!($($t)*))
         }
     )
@@ -61,7 +69,7 @@ macro_rules! debug {
 #[macro_export]
 macro_rules! info {
     ($($t:tt)*) => (
-        if $crate::tracelevel() <= $crate::Level::Info {
+        if $crate::Level::Info.enabled() {
             $crate::info(&format!($($t)*))
         }
     )
@@ -70,7 +78,7 @@ macro_rules! info {
 #[macro_export]
 macro_rules! warn {
     ($($t:tt)*) => (
-        if $crate::tracelevel() <= $crate::Level::Warn {
+        if $crate::Level::Warn.enabled() {
             $crate::warn(&format!($($t)*))
         }
     )
@@ -79,7 +87,7 @@ macro_rules! warn {
 #[macro_export]
 macro_rules! error {
     ($($t:tt)*) => (
-        if $crate::tracelevel() <= $crate::Level::Error {
+        if $crate::Level::Error.enabled() {
             $crate::error(&format!($($t)*))
         }
     )
