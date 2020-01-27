@@ -16,9 +16,15 @@ pub enum Level {
     Error,
     None
 }
+
+#[cfg(target_arch="wasm32")]
+static mut LOG_LEVEL: Level = Level::Info;
+
+#[cfg(not(target_arch="wasm32"))]
+static LOG_LEVEL: AtomicU8 = AtomicU8::new(Level::Info as u8);
+
 cfg_if::cfg_if! {
     if #[cfg(target_arch="wasm32")] {
-        static mut LOG_LEVEL: Level = Level::Info;
         pub fn set_level(level: Level) {
             unsafe {
                 LOG_LEVEL = level;
@@ -30,7 +36,6 @@ cfg_if::cfg_if! {
             }
         }
     } else {
-        static LOG_LEVEL: AtomicU8 = AtomicU8::new(Level::Info as u8);
         pub fn set_level(level: Level) {
             LOG_LEVEL.store(level as u8, Ordering::SeqCst);
         }
@@ -75,27 +80,27 @@ cfg_if::cfg_if! {
         pub fn trace(s: &str) {
             stderr().write_all("TRACE ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
-            stderr().write(b"\n");
+            stderr().write(b"\n").unwrap();
         }
         pub fn debug(s: &str) {
             stderr().write_all("DEBUG ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
-            stderr().write(b"\n");
+            stderr().write(b"\n").unwrap();
         }
         pub fn info(s: &str) {
             stderr().write_all("INFO ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
-            stderr().write(b"\n");
+            stderr().write(b"\n").unwrap();
         }
         pub fn warn(s: &str) {
             stderr().write_all("WARN ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
-            stderr().write(b"\n");
+            stderr().write(b"\n").unwrap();
         }
         pub fn error(s: &str) {
             stderr().write_all("ERROR ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
-            stderr().write(b"\n");
+            stderr().write(b"\n").unwrap();
         }
     }
 }
