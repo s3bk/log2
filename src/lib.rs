@@ -75,22 +75,27 @@ cfg_if::cfg_if! {
         pub fn trace(s: &str) {
             stderr().write_all("TRACE ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
+            stderr().write(b"\n");
         }
         pub fn debug(s: &str) {
             stderr().write_all("DEBUG ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
+            stderr().write(b"\n");
         }
         pub fn info(s: &str) {
             stderr().write_all("INFO ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
+            stderr().write(b"\n");
         }
         pub fn warn(s: &str) {
             stderr().write_all("WARN ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
+            stderr().write(b"\n");
         }
         pub fn error(s: &str) {
             stderr().write_all("ERROR ".as_bytes()).unwrap();
             stderr().write_all(s.as_bytes()).unwrap();
+            stderr().write(b"\n");
         }
     }
 }
